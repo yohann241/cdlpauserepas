@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Repas et Pauses - CDL</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f3f3;
+        }
+        header {
+            background-color: #20B2AA;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+        .container {
+            padding: 20px;
+            display: none;
+        }
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .login-container input {
+            padding: 10px;
+            margin: 5px;
+            width: 200px;
+        }
+        .login-container button {
+            padding: 10px 20px;
+            background-color: #20B2AA;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .planning {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .agent-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .agent-card.paused-immediate {
+            background-color: #FFFF99;
+        }
+        .agent-card.paused-scheduled {
+            background-color: #98FB98;
+        }
+        .status {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
+        }
+        .summary {
+            font-size: 0.8em;
+            color: #333;
+            margin-top: 10px;
+            text-align: left;
+        }
+        .notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #FF6347;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .time-input {
+            margin-top: 10px;
+            width: 45%;
+            margin-right: 5px;
+        }
+        .date-display {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .activity-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #e0f7fa;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .activity-item {
+            font-size: 0.9em;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Gestion des Repas et Pauses - Centre Diagnostic de Libreville</h1>
+</header>
+
+<div class="login-container">
+    <input type="text" id="username" placeholder="Login">
+    <input type="password" id="password" placeholder="Mot de passe">
+    <button onclick="login()">Connexion</button>
+</div>
+
+<div class="container">
+    <div class="activity-container" id="activity-container">
+        <h3>Résumé des Activités</h3>
+        <div id="activity-summary"></div>
+    </div>
+
+    <div class="planning">
+        <!-- Agent cards will be dynamically inserted here -->
+    </div>
+</div>
+
+<div class="notification" id="notification">
+    Un agent est revenu de pause.
+</div>
+
+<script>
+    const agentsInPause = new Map();
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+        }).catch(function(error) {
+            console.error('Service Worker registration failed:', error);
+        });
+    }
+
+    function requestNotificationPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+                }
+            });
+        }
+    }
+
+    function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        if ((username === 'admin1' || username === 'admin2') && password === '123456') {
+            document.querySelector('.login-container').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+            requestNotificationPermission();
+        } else {
+            alert('Login ou mot de passe incorrect.');
+        }
+    }
+</script>
+</body>
+</html>
